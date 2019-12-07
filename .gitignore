@@ -1,0 +1,9 @@
+tf2/bin
+tf2/Dataset
+tf2/include
+tf2/lib
+tf2/DEV/pip-selfcheck.json
+tf2/DEV/pyvenv.cfg
+tf2/DEV/res
+tf2/DEV/training_checkpoint
+.DS_Store
