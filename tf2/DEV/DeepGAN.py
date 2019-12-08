@@ -144,7 +144,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 
-EPOCHS = 150
+EPOCHS = 200
 noise_dim = 255
 num_examples_to_generate = 16
 
@@ -189,7 +189,7 @@ def train(dataset, epochs):
             #                         seed)
 
             # Save the model every 15 epochs
-            if (epoch + 1) % 50 == 0:
+            if (epoch + 1) % 25 == 0:
                 checkpoint.save(file_prefix=checkpoint_prefix)
                 # Generate after the final epoch
                 generate_and_save_images(generator,
