@@ -1,4 +1,5 @@
 import os
+import sys
 
 from tqdm import tqdm
 import glob
@@ -37,7 +38,7 @@ def load_data():
                 original_data = cv2.imread(dd + img)
                 if original_data is None:
                     continue
-                data = cv2.resize(original_data, (100, 100))
+                data = cv2.resize(original_data, (400, 400))
                 if "train" in dd:
                     x_trl.append(data)
                     y_trl.append("bike")
@@ -56,7 +57,7 @@ def load_data():
 
 (train_images, train_labels, _, _) = load_data()
 train_images = train_images.reshape(
-    train_images.shape[0], 100, 100, 3).astype('float32')
+    train_images.shape[0], 400, 400, 3).astype('float32')
 # Normalize the images to [-1, 1]
 train_images = (train_images - 127.5) / 127.5
 
@@ -85,9 +86,28 @@ def artist():
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
 
+    model.add(layers.Conv2DTranspose(
+        64, (5, 5), strides=(2, 2), padding='same', use_bias=False))
+    assert model.output_shape == (None, 100, 100, 64)
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+
+    model.add(layers.Conv2DTranspose(
+        32, (5, 5), strides=(2, 2), padding='same', use_bias=False))
+    assert model.output_shape == (None, 200, 200, 32)
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+
+    # model.add(layers.Conv2DTranspose(
+    #     64, (5, 5), strides=(2, 2), padding='same', use_bias=False))
+    # assert model.output_shape == (None, 400, 400, 64)
+    # model.add(layers.BatchNormalization())
+    # model.add(layers.LeakyReLU())
+
     model.add(layers.Conv2DTranspose(3, (5, 5), strides=(2, 2),
                                      padding='same', use_bias=False, activation='tanh'))
-    assert model.output_shape == (None, 100, 100, 3)
+
+    assert model.output_shape == (None, 400, 400, 3)
 
     return model
 
@@ -99,11 +119,12 @@ generated_image = generator(noise, training=False)
 # plt.imshow(generated_image[0,:,:,0])
 # plt.show()
 
+sys.exit()
 
 def critic():
     model = tf.keras.Sequential()
     model.add(layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same',
-                            input_shape=[100, 100, 3]))
+                            input_shape=[400, 400, 3]))
     model.add(layers.LeakyReLU())
     model.add(layers.Dropout(0.3))
 
